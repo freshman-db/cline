@@ -16,7 +16,7 @@ const FEATURE_FLAGS = {
 		SHELL_DETECTION: true, // Shell detection process logs
 		PATTERN_MATCHING: true, // Regex pattern matching details
 		GROUP_LOGS: true, // Use console.group for structured logs
-	}
+	},
 }
 
 /**
@@ -72,7 +72,10 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 				console.group("Windows Shell Detection")
 				console.log("Shell path:", shellPath)
 				console.log("PowerShell module path:", psModulePath)
-				console.log("Is PowerShell path check:", shellPath.toLowerCase().includes("powershell") || shellPath.toLowerCase().includes("pwsh"))
+				console.log(
+					"Is PowerShell path check:",
+					shellPath.toLowerCase().includes("powershell") || shellPath.toLowerCase().includes("pwsh"),
+				)
 				console.log("Is CMD path check:", shellPath.toLowerCase().includes("cmd.exe"))
 				console.groupEnd()
 			}
@@ -82,7 +85,7 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 				if (FEATURE_FLAGS.DEBUG.SHELL_DETECTION) {
 					console.log("[Shell Detection] Detected PowerShell", {
 						via: psModulePath ? "PSModulePath" : "shell path",
-						path: psModulePath || shellPath
+						path: psModulePath || shellPath,
 					})
 				}
 				return "powershell"
@@ -124,7 +127,10 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 			} else {
 				// Unix-specific terminal name checks
 				if (FEATURE_FLAGS.DEBUG.SHELL_DETECTION) {
-					console.log("Unix shell check:", terminalName.includes("bash") || terminalName.includes("zsh") || terminalName.includes("sh"))
+					console.log(
+						"Unix shell check:",
+						terminalName.includes("bash") || terminalName.includes("zsh") || terminalName.includes("sh"),
+					)
 				}
 
 				if (terminalName.includes("bash") || terminalName.includes("zsh") || terminalName.includes("sh")) {
@@ -158,17 +164,17 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 	private escapeCommand(cmd: string): string {
 		// If the command is already quoted, leave it alone
 		if (cmd.startsWith('"') && cmd.endsWith('"')) {
-			return cmd;
+			return cmd
 		}
 
 		// If command contains spaces or special chars, wrap in quotes
 		if (/[\s&;|<>(){}[\]`$!#%^*]/.test(cmd)) {
 			// Escape any existing double quotes
-			cmd = cmd.replace(/"/g, '`"');
-			return `"${cmd}"`;
+			cmd = cmd.replace(/"/g, '`"')
+			return `"${cmd}"`
 		}
 
-		return cmd;
+		return cmd
 	}
 
 	/**
@@ -176,50 +182,50 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 	 * properly handling quoted strings and escaped characters.
 	 */
 	private splitCommands(command: string): string[] {
-		const commands: string[] = [];
-		let current = '';
-		let inQuotes = false;
-		let escaped = false;
+		const commands: string[] = []
+		let current = ""
+		let inQuotes = false
+		let escaped = false
 
 		for (let i = 0; i < command.length; i++) {
-			const char = command[i];
+			const char = command[i]
 
 			if (escaped) {
-				current += char;
-				escaped = false;
-				continue;
+				current += char
+				escaped = false
+				continue
 			}
 
-			if (char === '\\') {
-				escaped = true;
-				current += char;
-				continue;
+			if (char === "\\") {
+				escaped = true
+				current += char
+				continue
 			}
 
 			if (char === '"') {
-				inQuotes = !inQuotes;
-				current += char;
-				continue;
+				inQuotes = !inQuotes
+				current += char
+				continue
 			}
 
 			// Check for && only when not in quotes
-			if (!inQuotes && char === '&' && command[i + 1] === '&') {
+			if (!inQuotes && char === "&" && command[i + 1] === "&") {
 				if (current.trim()) {
-					commands.push(current.trim());
+					commands.push(current.trim())
 				}
-				current = '';
-				i++; // Skip next &
-				continue;
+				current = ""
+				i++ // Skip next &
+				continue
 			}
 
-			current += char;
+			current += char
 		}
 
 		if (current.trim()) {
-			commands.push(current.trim());
+			commands.push(current.trim())
 		}
 
-		return commands;
+		return commands
 	}
 
 	/**
@@ -234,35 +240,37 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 			console.log("[Pattern Matching] Starting command transformation for shell:", shellType)
 		}
 
-		let transformedCommand = command;
+		let transformedCommand = command
 		switch (shellType) {
 			case "powershell":
 				// Split commands properly respecting quotes
-				const commands = this.splitCommands(command);
+				const commands = this.splitCommands(command)
 
 				// Transform and escape each command
-				transformedCommand = commands.map((cmd, i) => {
-					const escapedCmd = this.escapeCommand(cmd);
-					return i === 0 ? escapedCmd : `if ($?) { ${escapedCmd} }`;
-				}).join("; ");
-				break;
+				transformedCommand = commands
+					.map((cmd, i) => {
+						const escapedCmd = this.escapeCommand(cmd)
+						return i === 0 ? escapedCmd : `if ($?) { ${escapedCmd} }`
+					})
+					.join("; ")
+				break
 			case "cmd":
 				// Split by ;, join with &&
-				transformedCommand = command.split(/\s*;\s*/).join(" && ");
-				break;
+				transformedCommand = command.split(/\s*;\s*/).join(" && ")
+				break
 			case "unix":
 				// No transformation needed for unix shells
 				if (FEATURE_FLAGS.DEBUG.PATTERN_MATCHING) {
 					console.log("[Pattern Matching] No transformation needed for unix shell")
 				}
-				break;
+				break
 		}
 
 		if (FEATURE_FLAGS.DEBUG.PATTERN_MATCHING && transformedCommand !== command) {
 			console.log("[Pattern Matching] Command transformed:", {
 				original: command,
 				transformed: transformedCommand,
-				shellType
+				shellType,
 			})
 		}
 
@@ -309,7 +317,7 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 
 	async run(terminal: vscode.Terminal, command: string) {
 		if (terminal.shellIntegration && terminal.shellIntegration.executeCommand) {
-			const formattedCommand = this.formatCommandForShell(command, terminal);
+			const formattedCommand = this.formatCommandForShell(command, terminal)
 			const execution = terminal.shellIntegration.executeCommand(formattedCommand)
 			const stream = execution.read()
 			// todo: need to handle errors
@@ -451,7 +459,7 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 			this.emit("completed")
 			this.emit("continue")
 		} else {
-			const formattedCommand = this.formatCommandForShell(command, terminal);
+			const formattedCommand = this.formatCommandForShell(command, terminal)
 			terminal.sendText(formattedCommand, true)
 			// For terminals without shell integration, we can't know when the command completes
 			// So we'll just emit the continue event after a delay
