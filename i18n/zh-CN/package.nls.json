@@ -7,7 +7,12 @@
         "history": "历史记录",
         "openInEditor": "在编辑器中打开",
         "settings": "设置",
-        "openInNewTab": "在新标签页中打开"
+        "openInNewTab": "在新标签页中打开",
+        "plusButtonClicked": "新建任务",
+        "mcpButtonClicked": "MCP 服务器",
+        "historyButtonClicked": "历史记录",
+        "popoutButtonClicked": "在编辑器中打开",
+        "settingsButtonClicked": "设置"
     },
     "configuration": {
         "vsCodeLmModelSelector": {

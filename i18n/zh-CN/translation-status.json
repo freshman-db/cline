@@ -1,5 +1,5 @@
 {
-    "lastUpdate": "2024-01-27",
+    "lastUpdate": "2025-01-27",
     "translations": {
         "package.nls.json": {
             "displayName": {
@@ -32,7 +32,7 @@
             },
             "commands.openInNewTab": {
                 "status": "translated",
-                "lastChecked": "2024-01-27"
+                "lastChecked": "2025-01-27"
             },
             "configuration.vsCodeLmModelSelector.description": {
                 "status": "translated",
@@ -45,7 +45,39 @@
             "configuration.enableCheckpoints.description": {
                 "status": "translated",
                 "lastChecked": "2024-01-27"
+            },
+            "commands.plusButtonClicked": {
+                "status": "translated",
+                "lastChecked": "2025-01-27"
+            },
+            "commands.mcpButtonClicked": {
+                "status": "translated",
+                "lastChecked": "2025-01-27"
+            },
+            "commands.historyButtonClicked": {
+                "status": "translated",
+                "lastChecked": "2025-01-27"
+            },
+            "commands.popoutButtonClicked": {
+                "status": "translated",
+                "lastChecked": "2025-01-27"
+            },
+            "commands.settingsButtonClicked": {
+                "status": "translated",
+                "lastChecked": "2025-01-27"
+            },
+            "configuration.vsCodeLmModelSelector": {
+                "status": "translated",
+                "lastChecked": "2025-01-27"
+            },
+            "configuration.mcp.mode": {
+                "status": "translated",
+                "lastChecked": "2025-01-27"
+            },
+            "configuration.enableCheckpoints": {
+                "status": "translated",
+                "lastChecked": "2025-01-27"
             }
         }
     }
-} 
+}
