@@ -45,11 +45,18 @@ function checkTranslationStatus() {
     // 检查命令翻译
     const commands = source.contributes.commands;
     commands.forEach(cmd => {
-        const cmdKey = `commands.${cmd.command.replace('cline.', '')}`;
-        if (!translation.commands[cmdKey]) {
-            console.log(`Missing translation for command: ${cmdKey}`);
-            status.translations['package.nls.json'][cmdKey] = {
-                status: 'pending',
+        const cmdName = cmd.command.replace('cline.', '');
+        if (!translation.commands || !translation.commands[cmdName]) {
+            console.log(`Missing translation for command: ${cmdName}`);
+            if (!status.translations['package.nls.json'][`commands.${cmdName}`]) {
+                status.translations['package.nls.json'][`commands.${cmdName}`] = {
+                    status: 'pending',
+                    lastChecked: new Date().toISOString().split('T')[0]
+                };
+            }
+        } else {
+            status.translations['package.nls.json'][`commands.${cmdName}`] = {
+                status: 'translated',
                 lastChecked: new Date().toISOString().split('T')[0]
             };
         }
@@ -58,11 +65,30 @@ function checkTranslationStatus() {
     // 检查配置翻译
     const configurations = source.contributes.configuration.properties;
     Object.keys(configurations).forEach(key => {
-        const configKey = `configuration.${key.replace('cline.', '')}`;
-        if (!translation.configuration[configKey]) {
+        const configKey = key.replace('cline.', '');
+        const configPath = configKey.split('.');
+        let translatedConfig = translation.configuration;
+        let isTranslated = true;
+
+        for (const part of configPath) {
+            if (!translatedConfig || !translatedConfig[part]) {
+                isTranslated = false;
+                break;
+            }
+            translatedConfig = translatedConfig[part];
+        }
+
+        if (!isTranslated) {
             console.log(`Missing translation for configuration: ${configKey}`);
-            status.translations['package.nls.json'][configKey] = {
-                status: 'pending',
+            if (!status.translations['package.nls.json'][`configuration.${configKey}`]) {
+                status.translations['package.nls.json'][`configuration.${configKey}`] = {
+                    status: 'pending',
+                    lastChecked: new Date().toISOString().split('T')[0]
+                };
+            }
+        } else {
+            status.translations['package.nls.json'][`configuration.${configKey}`] = {
+                status: 'translated',
                 lastChecked: new Date().toISOString().split('T')[0]
             };
         }
@@ -91,14 +117,12 @@ function generateReport() {
     const translations = status.translations['package.nls.json'];
     let total = 0;
     let translated = 0;
-    let pending = 0;
 
     Object.entries(translations).forEach(([key, value]) => {
         total++;
         if (value.status === 'translated') {
             translated++;
         } else {
-            pending++;
             console.log(`- ${key}: ${value.status} (Last checked: ${value.lastChecked})`);
         }
     });
@@ -106,7 +130,6 @@ function generateReport() {
     console.log('\nSummary:');
     console.log(`Total items: ${total}`);
     console.log(`Translated: ${translated}`);
-    console.log(`Pending: ${pending}`);
     console.log(`Coverage: ${((translated / total) * 100).toFixed(2)}%`);
 }
 
