@@ -1,6 +1,10 @@
-# PowerShell 更新脚本
+# PowerShell Translation Update Script
 
-# 颜色定义
+# Set output encoding to UTF-8
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
+
+# Color definitions
 $colors = @{
     Red = 'Red'
     Green = 'Green'
@@ -8,7 +12,7 @@ $colors = @{
     White = 'White'
 }
 
-# 打印带颜色的消息
+# Print colored message
 function Write-ColorMessage {
     param(
         [string]$Color,
@@ -17,72 +21,70 @@ function Write-ColorMessage {
     Write-Host $Message -ForegroundColor $Color
 }
 
-# 检查命令是否成功执行
+# Check command result
 function Test-CommandResult {
     param(
         [string]$Message
     )
     if ($LASTEXITCODE -eq 0) {
-        Write-ColorMessage -Color $colors.Green -Message "✓ $Message"
+        Write-ColorMessage -Color $colors.Green -Message "[OK] $Message"
         return $true
-    }
-    else {
-        Write-ColorMessage -Color $colors.Red -Message "✗ $Message"
+    } else {
+        Write-ColorMessage -Color $colors.Red -Message "[ERROR] $Message"
         exit 1
     }
 }
 
-# 主要更新流程
+# Main update process
 function Update-Translations {
-    Write-ColorMessage -Color $colors.Yellow -Message "开始更新翻译..."
+    Write-ColorMessage -Color $colors.Yellow -Message "Starting translation update..."
 
-    # 1. 保存当前分支名
+    # 1. Save current branch name
     $current_branch = git rev-parse --abbrev-ref HEAD
-    Write-ColorMessage -Color $colors.Yellow -Message "当前分支: $current_branch"
+    Write-ColorMessage -Color $colors.Yellow -Message "Current branch: $current_branch"
 
-    # 2. 确保工作区干净
+    # 2. Ensure working directory is clean
     $status = git status -s
     if ($status) {
-        Write-ColorMessage -Color $colors.Red -Message "错误: 工作区不干净，请先提交或存储更改"
+        Write-ColorMessage -Color $colors.Red -Message "Error: Working directory is not clean. Please commit or stash changes."
         exit 1
     }
 
-    # 3. 更新主分支
-    Write-ColorMessage -Color $colors.Yellow -Message "更新主分支..."
+    # 3. Update main branch
+    Write-ColorMessage -Color $colors.Yellow -Message "Updating main branch..."
     git checkout main
-    Test-CommandResult -Message "切换到主分支"
+    Test-CommandResult -Message "Switched to main branch"
     
     git pull upstream main
-    Test-CommandResult -Message "从上游拉取更新"
+    Test-CommandResult -Message "Pulled updates from upstream"
 
-    # 4. 更新i18n分支
-    Write-ColorMessage -Color $colors.Yellow -Message "更新i18n分支..."
+    # 4. Update i18n branch
+    Write-ColorMessage -Color $colors.Yellow -Message "Updating i18n branch..."
     git checkout i18n-zh
-    Test-CommandResult -Message "切换到i18n-zh分支"
+    Test-CommandResult -Message "Switched to i18n-zh branch"
     
     git merge main
-    Test-CommandResult -Message "合并主分支更新"
+    Test-CommandResult -Message "Merged main branch updates"
 
-    # 5. 运行翻译同步工具
-    Write-ColorMessage -Color $colors.Yellow -Message "运行翻译同步工具..."
+    # 5. Run translation sync tool
+    Write-ColorMessage -Color $colors.Yellow -Message "Running translation sync tool..."
     node scripts/i18n-sync.js
-    Test-CommandResult -Message "运行翻译同步工具"
+    Test-CommandResult -Message "Translation sync completed"
 
-    # 6. 检查是否有需要更新的翻译
+    # 6. Check for translation updates
     $status = git status -s
     if ($status) {
-        Write-ColorMessage -Color $colors.Yellow -Message "检测到翻译文件更改，请检查并提交更改"
-    }
-    else {
-        Write-ColorMessage -Color $colors.Green -Message "翻译文件已是最新"
+        Write-ColorMessage -Color $colors.Yellow -Message "Translation file changes detected. Please review and commit changes."
+    } else {
+        Write-ColorMessage -Color $colors.Green -Message "Translation files are up to date."
     }
 
-    # 7. 返回到原始分支
+    # 7. Return to original branch
     git checkout $current_branch
-    Test-CommandResult -Message "返回到原始分支"
+    Test-CommandResult -Message "Returned to original branch"
 
-    Write-ColorMessage -Color $colors.Green -Message "更新完成！"
+    Write-ColorMessage -Color $colors.Green -Message "Update completed"
 }
 
-# 运行主函数
+# Run main function
 Update-Translations 
