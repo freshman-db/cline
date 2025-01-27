@@ -1,0 +1,51 @@
+{
+    "lastUpdate": "2024-01-27",
+    "translations": {
+        "package.nls.json": {
+            "displayName": {
+                "status": "translated",
+                "lastChecked": "2024-01-27"
+            },
+            "description": {
+                "status": "translated",
+                "lastChecked": "2024-01-27"
+            },
+            "commands.newTask": {
+                "status": "translated",
+                "lastChecked": "2024-01-27"
+            },
+            "commands.mcpServers": {
+                "status": "translated",
+                "lastChecked": "2024-01-27"
+            },
+            "commands.history": {
+                "status": "translated",
+                "lastChecked": "2024-01-27"
+            },
+            "commands.openInEditor": {
+                "status": "translated",
+                "lastChecked": "2024-01-27"
+            },
+            "commands.settings": {
+                "status": "translated",
+                "lastChecked": "2024-01-27"
+            },
+            "commands.openInNewTab": {
+                "status": "translated",
+                "lastChecked": "2024-01-27"
+            },
+            "configuration.vsCodeLmModelSelector.description": {
+                "status": "translated",
+                "lastChecked": "2024-01-27"
+            },
+            "configuration.mcp.mode.description": {
+                "status": "translated",
+                "lastChecked": "2024-01-27"
+            },
+            "configuration.enableCheckpoints.description": {
+                "status": "translated",
+                "lastChecked": "2024-01-27"
+            }
+        }
+    }
+} 
