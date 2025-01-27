@@ -6,6 +6,7 @@ import { memo, useMemo, useState, useEffect } from "react"
 import Fuse, { FuseResult } from "fuse.js"
 import { formatLargeNumber } from "../../utils/format"
 import { formatSize } from "../../utils/size"
+import { useTranslation } from "react-i18next"
 
 type HistoryViewProps = {
 	onDone: () => void
@@ -18,6 +19,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 	const [searchQuery, setSearchQuery] = useState("")
 	const [sortOption, setSortOption] = useState<SortOption>("newest")
 	const [lastNonRelevantSort, setLastNonRelevantSort] = useState<SortOption | null>("newest")
+	const { t } = useTranslation()
 
 	useEffect(() => {
 		if (searchQuery && sortOption !== "mostRelevant" && !lastNonRelevantSort) {
@@ -142,9 +144,9 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 							color: "var(--vscode-foreground)",
 							margin: 0,
 						}}>
-						History
+						{t("history.title")}
 					</h3>
-					<VSCodeButton onClick={onDone}>Done</VSCodeButton>
+					<VSCodeButton onClick={onDone}>{t("history.done")}</VSCodeButton>
 				</div>
 				<div style={{ padding: "5px 17px 6px 17px" }}>
 					<div
@@ -155,7 +157,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 						}}>
 						<VSCodeTextField
 							style={{ width: "100%" }}
-							placeholder="Fuzzy search history..."
+							placeholder={t("history.searchPlaceholder")}
 							value={searchQuery}
 							onInput={(e) => {
 								const newValue = (e.target as HTMLInputElement)?.value
@@ -176,7 +178,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 							{searchQuery && (
 								<div
 									className="input-icon-button codicon codicon-close"
-									aria-label="Clear search"
+									aria-label={t("history.clearSearch")}
 									onClick={() => setSearchQuery("")}
 									slot="end"
 									style={{
@@ -192,33 +194,30 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 							style={{ display: "flex", flexWrap: "wrap" }}
 							value={sortOption}
 							onChange={(e) => setSortOption((e.target as HTMLInputElement).value as SortOption)}>
-							<VSCodeRadio value="newest">Newest</VSCodeRadio>
-							<VSCodeRadio value="oldest">Oldest</VSCodeRadio>
-							<VSCodeRadio value="mostExpensive">Most Expensive</VSCodeRadio>
-							<VSCodeRadio value="mostTokens">Most Tokens</VSCodeRadio>
+							<VSCodeRadio value="newest">{t("history.newest")}</VSCodeRadio>
+							<VSCodeRadio value="oldest">{t("history.oldest")}</VSCodeRadio>
+							<VSCodeRadio value="mostExpensive">{t("history.mostExpensive")}</VSCodeRadio>
+							<VSCodeRadio value="mostTokens">{t("history.mostTokens")}</VSCodeRadio>
 							<VSCodeRadio value="mostRelevant" disabled={!searchQuery} style={{ opacity: searchQuery ? 1 : 0.5 }}>
-								Most Relevant
+								{t("history.mostRelevant")}
 							</VSCodeRadio>
 						</VSCodeRadioGroup>
 					</div>
 				</div>
 				<div style={{ flexGrow: 1, overflowY: "auto", margin: 0 }}>
-					{/* {presentableTasks.length === 0 && (
+					{presentableTasks.length === 0 && (
 						<div
 							style={{
-								
 								alignItems: "center",
 								fontStyle: "italic",
 								color: "var(--vscode-descriptionForeground)",
 								textAlign: "center",
 								padding: "0px 10px",
 							}}>
-							<span
-								className="codicon codicon-robot"
-								style={{ fontSize: "60px", marginBottom: "10px" }}></span>
-							<div>Start a task to see it here</div>
+							<span className="codicon codicon-robot" style={{ fontSize: "60px", marginBottom: "10px" }}></span>
+							<div>{t("history.emptyState")}</div>
 						</div>
-					)} */}
+					)}
 					<Virtuoso
 						style={{
 							flexGrow: 1,
@@ -319,7 +318,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 														fontWeight: 500,
 														color: "var(--vscode-descriptionForeground)",
 													}}>
-													Tokens:
+													{t("history.tokens")}
 												</span>
 												<span
 													style={{
@@ -372,7 +371,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 														fontWeight: 500,
 														color: "var(--vscode-descriptionForeground)",
 													}}>
-													Cache:
+													{t("history.cache")}
 												</span>
 												<span
 													style={{
@@ -429,7 +428,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 															fontWeight: 500,
 															color: "var(--vscode-descriptionForeground)",
 														}}>
-														API Cost:
+														{t("history.apiCost")}
 													</span>
 													<span
 														style={{
@@ -452,17 +451,20 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 	)
 }
 
-const ExportButton = ({ itemId }: { itemId: string }) => (
-	<VSCodeButton
-		className="export-button"
-		appearance="icon"
-		onClick={(e) => {
-			e.stopPropagation()
-			vscode.postMessage({ type: "exportTaskWithId", text: itemId })
-		}}>
-		<div style={{ fontSize: "11px", fontWeight: 500, opacity: 1 }}>EXPORT</div>
-	</VSCodeButton>
-)
+const ExportButton = ({ itemId }: { itemId: string }) => {
+	const { t } = useTranslation()
+	return (
+		<VSCodeButton
+			className="export-button"
+			appearance="icon"
+			onClick={(e) => {
+				e.stopPropagation()
+				vscode.postMessage({ type: "exportTaskWithId", text: itemId })
+			}}>
+			<div style={{ fontSize: "11px", fontWeight: 500, opacity: 1 }}>{t("history.export")}</div>
+		</VSCodeButton>
+	)
+}
 
 // https://gist.github.com/evenfrost/1ba123656ded32fb7a0cd4651efd4db0
 export const highlight = (fuseSearchResult: FuseResult<any>[], highlightClassName: string = "history-item-highlight") => {

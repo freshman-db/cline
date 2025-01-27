@@ -1,6 +1,7 @@
 import { VSCodeCheckbox, VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
 import { useCallback, useState } from "react"
 import styled from "styled-components"
+import { useTranslation } from "react-i18next"
 import { useExtensionState } from "../../context/ExtensionStateContext"
 import { AutoApprovalSettings } from "../../../../src/shared/AutoApprovalSettings"
 import { vscode } from "../../utils/vscode"
@@ -50,13 +51,20 @@ const ACTION_METADATA: {
 ]
 
 const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
+	const { t } = useTranslation()
 	const { autoApprovalSettings } = useExtensionState()
 	const [isExpanded, setIsExpanded] = useState(false)
 	const [isHoveringCollapsibleSection, setIsHoveringCollapsibleSection] = useState(false)
 
-	// Careful not to use partials to mutate since spread operator only does shallow copy
+	const getTranslatedActionMetadata = () =>
+		ACTION_METADATA.map((action) => ({
+			...action,
+			label: t(`autoApprove.actions.${action.id}.label`),
+			shortName: t(`autoApprove.actions.${action.id}.shortName`),
+			description: t(`autoApprove.actions.${action.id}.description`),
+		}))
 
-	const enabledActions = ACTION_METADATA.filter((action) => autoApprovalSettings.actions[action.id])
+	const enabledActions = getTranslatedActionMetadata().filter((action) => autoApprovalSettings.actions[action.id])
 	const enabledActionsList = enabledActions.map((action) => action.shortName).join(", ")
 	const hasEnabledActions = enabledActions.length > 0
 
@@ -163,16 +171,9 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 					}}
 					checked={hasEnabledActions && autoApprovalSettings.enabled}
 					disabled={!hasEnabledActions}
-					// onChange={(e) => {
-					// 	const checked = (e.target as HTMLInputElement).checked
-					// 	updateEnabled(checked)
-					// }}
 					onClick={(e) => {
-						/*
-						vscode web toolkit bug: when changing the value of a vscodecheckbox programatically, it will call its onChange with stale state. This led to updateEnabled being called with an old vesion of autoApprovalSettings, effectively undoing the state change that was triggered by the last action being unchecked. A simple workaround is to just not use onChange and intead use onClick. We are lucky this is a checkbox and the newvalue is simply opposite of current state.
-						*/
 						if (!hasEnabledActions) return
-						e.stopPropagation() // stops click from bubbling up to the parent, in this case stopping the expanding/collapsing
+						e.stopPropagation()
 						updateEnabled(!autoApprovalSettings.enabled)
 					}}
 				/>
@@ -180,7 +181,6 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 					isHovered={isHoveringCollapsibleSection}
 					style={{ cursor: "pointer" }}
 					onClick={() => {
-						// to prevent this from counteracting parent
 						if (hasEnabledActions) {
 							setIsExpanded((prev) => !prev)
 						}
@@ -190,7 +190,7 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 							color: getAsVar(VSC_FOREGROUND),
 							whiteSpace: "nowrap",
 						}}>
-						Auto-approve:
+						{t("autoApprove.title")}
 					</span>
 					<span
 						style={{
@@ -198,7 +198,7 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 							overflow: "hidden",
 							textOverflow: "ellipsis",
 						}}>
-						{enabledActions.length === 0 ? "None" : enabledActionsList}
+						{enabledActions.length === 0 ? t("autoApprove.none") : enabledActionsList}
 					</span>
 					<span
 						className={`codicon codicon-chevron-${isExpanded ? "down" : "right"}`}
@@ -217,10 +217,9 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 							color: getAsVar(VSC_DESCRIPTION_FOREGROUND),
 							fontSize: "12px",
 						}}>
-						Auto-approve allows Cline to perform the following actions without asking for permission. Please use with
-						caution and only enable if you understand the risks.
+						{t("autoApprove.description")}
 					</div>
-					{ACTION_METADATA.map((action) => (
+					{getTranslatedActionMetadata().map((action) => (
 						<div key={action.id} style={{ margin: "6px 0" }}>
 							<VSCodeCheckbox
 								checked={autoApprovalSettings.actions[action.id]}
@@ -257,13 +256,11 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 							marginBottom: "8px",
 							color: getAsVar(VSC_FOREGROUND),
 						}}>
-						<span style={{ flexShrink: 1, minWidth: 0 }}>Max Requests:</span>
+						<span style={{ flexShrink: 1, minWidth: 0 }}>{t("autoApprove.maxRequests")}</span>
 						<VSCodeTextField
-							// placeholder={DEFAULT_AUTO_APPROVAL_SETTINGS.maxRequests.toString()}
 							value={autoApprovalSettings.maxRequests.toString()}
 							onInput={(e) => {
 								const input = e.target as HTMLInputElement
-								// Remove any non-numeric characters
 								input.value = input.value.replace(/[^0-9]/g, "")
 								const value = parseInt(input.value)
 								if (!isNaN(value) && value > 0) {
@@ -271,7 +268,6 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 								}
 							}}
 							onKeyDown={(e) => {
-								// Prevent non-numeric keys (except for backspace, delete, arrows)
 								if (!/^\d$/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight"].includes(e.key)) {
 									e.preventDefault()
 								}
@@ -285,7 +281,7 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 							fontSize: "12px",
 							marginBottom: "10px",
 						}}>
-						Cline will automatically make this many API requests before asking for approval to proceed with the task.
+						{t("autoApprove.maxRequestsDescription")}
 					</div>
 					<div style={{ margin: "6px 0" }}>
 						<VSCodeCheckbox
@@ -294,7 +290,7 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 								const checked = (e.target as HTMLInputElement).checked
 								updateNotifications(checked)
 							}}>
-							Enable Notifications
+							{t("autoApprove.enableNotifications")}
 						</VSCodeCheckbox>
 						<div
 							style={{
@@ -302,7 +298,7 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 								color: getAsVar(VSC_DESCRIPTION_FOREGROUND),
 								fontSize: "12px",
 							}}>
-							Receive system notifications when Cline requires approval to proceed or when a task is completed.
+							{t("autoApprove.notificationsDescription")}
 						</div>
 					</div>
 				</div>

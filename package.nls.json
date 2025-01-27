@@ -1,0 +1,18 @@
+{
+	"displayName": "Cline",
+	"description": "Autonomous coding agent right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
+	"newTask": "New Task",
+	"mcpServers": "MCP Servers",
+	"history": "History",
+	"openInEditor": "Open in Editor",
+	"settings": "Settings",
+	"openInNewTab": "Open In New Tab",
+	"vscodeLmDescription": "Settings for VSCode Language Model API",
+	"vscodeLmVendor": "The vendor of the language model (e.g. copilot)",
+	"vscodeLmFamily": "The family of the language model (e.g. gpt-4)",
+	"mcpModeDescription": "Control MCP server functionality and its inclusion in AI prompts. When disabled, Cline will not be aware of MCP capabilities, saving model context window tokens.",
+	"mcpModeEnum0": "Full MCP functionality including server use and build instructions",
+	"mcpModeEnum1": "Enable MCP server use but exclude build instructions from AI prompts to save tokens",
+	"mcpModeEnum2": "Disable all MCP functionality",
+	"checkpointsDescription": "Enable checkpoint creation during task execution"
+}

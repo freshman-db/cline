@@ -1,0 +1,18 @@
+{
+	"displayName": "Cline",
+	"description": "在您的IDE中运行的自主编码助手，能够创建/编辑文件、运行命令、使用浏览器等，每一步都需要您的许可。",
+	"newTask": "新建任务",
+	"mcpServers": "MCP 服务器",
+	"history": "历史记录",
+	"openInEditor": "在编辑器中打开",
+	"settings": "设置",
+	"openInNewTab": "在新标签页中打开",
+	"vscodeLmDescription": "VSCode 语言模型 API 设置",
+	"vscodeLmVendor": "语言模型供应商（例如：copilot）",
+	"vscodeLmFamily": "语言模型系列（例如：gpt-4）",
+	"mcpModeDescription": "控制 MCP 服务器功能及其在 AI 提示中的包含。禁用时，Cline 将不会感知 MCP 功能，从而节省模型上下文窗口令牌。",
+	"mcpModeEnum0": "完整 MCP 功能，包括服务器使用和构建指令",
+	"mcpModeEnum1": "启用 MCP 服务器使用但从 AI 提示中排除构建指令以节省令牌",
+	"mcpModeEnum2": "禁用所有 MCP 功能",
+	"checkpointsDescription": "在任务执行期间启用检查点创建"
+}

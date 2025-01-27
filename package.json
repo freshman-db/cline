@@ -1,7 +1,7 @@
 {
 	"name": "claude-dev",
-	"displayName": "Cline",
-	"description": "Autonomous coding agent right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
+	"displayName": "%displayName%",
+	"description": "%description%",
 	"version": "3.2.5",
 	"icon": "assets/icons/icon.png",
 	"galleryBanner": {
@@ -50,7 +50,7 @@
 			"activitybar": [
 				{
 					"id": "claude-dev-ActivityBar",
-					"title": "Cline",
+					"title": "%displayName%",
 					"icon": "assets/icons/icon.svg"
 				}
 			]
@@ -67,32 +67,32 @@
 		"commands": [
 			{
 				"command": "cline.plusButtonClicked",
-				"title": "New Task",
+				"title": "%newTask%",
 				"icon": "$(add)"
 			},
 			{
 				"command": "cline.mcpButtonClicked",
-				"title": "MCP Servers",
+				"title": "%mcpServers%",
 				"icon": "$(server)"
 			},
 			{
 				"command": "cline.historyButtonClicked",
-				"title": "History",
+				"title": "%history%",
 				"icon": "$(history)"
 			},
 			{
 				"command": "cline.popoutButtonClicked",
-				"title": "Open in Editor",
+				"title": "%openInEditor%",
 				"icon": "$(link-external)"
 			},
 			{
 				"command": "cline.settingsButtonClicked",
-				"title": "Settings",
+				"title": "%settings%",
 				"icon": "$(settings-gear)"
 			},
 			{
 				"command": "cline.openInNewTab",
-				"title": "Open In New Tab",
+				"title": "%openInNewTab%",
 				"category": "Cline"
 			}
 		],
@@ -126,21 +126,21 @@
 			]
 		},
 		"configuration": {
-			"title": "Cline",
+			"title": "%displayName%",
 			"properties": {
 				"cline.vsCodeLmModelSelector": {
 					"type": "object",
 					"properties": {
 						"vendor": {
 							"type": "string",
-							"description": "The vendor of the language model (e.g. copilot)"
+							"description": "%vscodeLmVendor%"
 						},
 						"family": {
 							"type": "string",
-							"description": "The family of the language model (e.g. gpt-4)"
+							"description": "%vscodeLmFamily%"
 						}
 					},
-					"description": "Settings for VSCode Language Model API"
+					"description": "%vscodeLmDescription%"
 				},
 				"cline.mcp.mode": {
 					"type": "string",
@@ -150,17 +150,17 @@
 						"disabled"
 					],
 					"enumDescriptions": [
-						"Full MCP functionality including server use and build instructions",
-						"Enable MCP server use but exclude build instructions from AI prompts to save tokens",
-						"Disable all MCP functionality"
+						"%mcpModeEnum0%",
+						"%mcpModeEnum1%",
+						"%mcpModeEnum2%"
 					],
 					"default": "enabled",
-					"description": "Control MCP server functionality and its inclusion in AI prompts. When disabled, Cline will not be aware of MCP capabilities, saving model context window tokens."
+					"description": "%mcpModeDescription%"
 				},
 				"cline.enableCheckpoints": {
 					"type": "boolean",
 					"default": true,
-					"description": "Enable checkpoint creation during task execution"
+					"description": "%checkpointsDescription%"
 				}
 			}
 		}
